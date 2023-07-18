@@ -1,18 +1,22 @@
 import React from 'react';
 
-const PopupModal = ({ isOpen, onCancel, onSave, value, onChange }) => {
+const PopupModal = ({ isOpen, onCancel, onSave, value, onChange, taskId }) => {
     const modalStyle = {
         position: 'fixed',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         zIndex: 9999,
-        display: isOpen ? 'block' : 'none'
+        display:  'block'
     };
 
     const marginStyle = {
-        margin: 30,
-        paddingLeft: 10,
+        marginLeft: 100,
+        marginRight: 100,
+        marginTop: 40,
+        marginBottom: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
     }
 
     const marginButtonsStyle = {
@@ -20,17 +24,17 @@ const PopupModal = ({ isOpen, onCancel, onSave, value, onChange }) => {
         marginRight: 10
     }
 
-    const backgroudStyle = {
+    const backgroundStyle = {
         backgroundColor: "#FFFFFF"
     }
 
     return (
         <div id="edit-task-modal" style={modalStyle}  >
-            <div className="modal-dialog rounded-3 border border-black" style={backgroudStyle}>
+            <div className="modal-dialog rounded-3 border border-black" style={backgroundStyle}>
                 <div className="modal-content">
                     <div className="modal-header" style={marginStyle}>
-                        <h5 className="modal-title" >Edit Task</h5>
-                        <button type="button" className="btn-close" onClick={onCancel} />
+                        <h5 className="modal-title" >Edit Tittle Task ID: {taskId}</h5>
+                        <button style={marginButtonsStyle} type="button" className="btn-close" onClick={onCancel} />
                     </div>
                     <div className="modal-body" style={marginStyle}>
                         <input type="text" value={value} onChange={onChange} />
