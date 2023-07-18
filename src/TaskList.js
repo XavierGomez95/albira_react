@@ -16,10 +16,12 @@ import PopupModalDelete from "./Components/PopupModalDelete";
 const TaskList = () => {
     const [tasks, setTasks] = useState([]);
     const [taskId, setTaskId] = useState(0);
-    const [newTittle, setNewTittle] = useState('');
+    const [newId, setNewId] = useState(tasks.length); // Para crear un nuevo to do
+    const [newTitle, setNewTitle] = useState('');
+    const [newCompleted, setNewCompleted] = useState(false);
+    const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [completed, setCompleted] = useState(false);
 
 
     // Lo primero es el valor de tasks y lo segundo el tipo.
@@ -54,17 +56,20 @@ const TaskList = () => {
     };
 
     const handleEdit = (event) => {
-        setNewTittle(event.target.value);
+        setNewTitle(event.target.value);
+        setNewCompleted(event.target.checked); // FIXME
+
+        console.log()
 
         const currentTask = tasks.find((task) => task.id === taskId);
 
         fetch('https://jsonplaceholder.typicode.com/todos/' + taskId, {
             method: 'PUT',
             body: JSON.stringify({
-                id: currentTask.id,
-                title: newTittle,
-                body: currentTask.body,
                 userId: currentTask.userId,
+                id: currentTask.id,
+                title: newTitle,
+                completed: newCompleted,
             }),
         }).then((response) => {
             if (response.ok) {
@@ -72,7 +77,7 @@ const TaskList = () => {
                 const updatedTasks = tasks.map((task) => {
                     if (task.id === taskId) {
                         // Actualizamos el título de la tarea modificada
-                        return { ...task, title: newTittle };
+                        return { ...task, title: newTitle, completed: newCompleted };
                     }
                     return task;
                 });
@@ -95,21 +100,19 @@ const TaskList = () => {
     };
 
     const handleChange = (event) => {
-        setNewTittle(event.target.value)
-    };
-
-    const handleCheckbox = () => {
-        // STUFF
-        if (!completed) {
-            setCompleted(true);
-        } else {
-            setCompleted(false);
+        if (event.target.type === 'text') {
+            setNewTitle(event.target.value);
+        } else if (event.target.type === 'checkbox') {
+            setNewCompleted(event.target.checked);
         }
     };
 
-    const openEditPopup = (taskTitle, taskId) => {
-        setTaskId(taskId)
-        setNewTittle(taskTitle);
+    const openEditPopup = (taskTitle, taskId, taskCompleted) => {
+        console.log(taskCompleted);
+        setNewCompleted(taskCompleted);
+        console.log(newCompleted);
+        setTaskId(taskId);
+        setNewTitle(taskTitle);
         setShowEditModal(true);
     };
 
@@ -117,6 +120,19 @@ const TaskList = () => {
         setTaskId(taskId)
         setShowDeleteModal(true);
     };
+
+    const openAddPopup = () => {
+        //const newId = tasks.length + 1;
+        console.log(newId);
+        console.log(tasks.length + 1);
+        setShowAddModal(true);
+    };
+
+
+
+
+
+
 
     return (
         <div>
@@ -129,9 +145,9 @@ const TaskList = () => {
             <div className="container">
                 <div className="row mb-3">
                     <div className="col align-self-end">
-                        <AddButton data-bs-target="#add-task-modal" className="text-white " style={{ color: "white"}}>
-                            + NEW TO DO
-                        </AddButton>
+                        <AddButton data-bs-target="#add-task-modal" className="text-white " style={{ color: "white"}} onClick={() => {
+                            openAddPopup();
+                        }} />
                     </div>
                 </div>
 
@@ -160,20 +176,20 @@ const TaskList = () => {
                                 <td>{task.title}</td>
                                 <td className="text-center">
                                     {task.completed ? (
-                                        <FontAwesomeIcon icon={faSquareCheck} onClick={() => handleCheckbox(task.id, task.body, task.title, task.userId)} />
+                                        <FontAwesomeIcon icon={faSquareCheck} />
                                     ) : (
-                                        <FontAwesomeIcon icon={faSquare} onClick={() => handleCheckbox(task.id, task.body, task.title, task.userId)} />
+                                        <FontAwesomeIcon icon={faSquare} />
                                     )}
                                 </td>
                                 <td className="text-center" >
                                     <EditButton data-bs-target="#edit-task-modal" onClick={() => {
-                                        openEditPopup(task.title, task.id);
+                                        console.log('task.completed antes de llamar a la actualizacion: ' + task.completed);
+                                        openEditPopup(task.title, task.id, task.completed);
                                     }} />
                                 </td>
                                 <td className="text-center p-2">
                                     <DeleteButton onClick={() => {
                                         openDeletePopup(task.id);
-                                        //handleDelete(task.id)
                                     }} />
                                 </td>
                             </tr>
@@ -187,13 +203,22 @@ const TaskList = () => {
                         onCancel={handleCancel}
                         onEdit={handleEdit}
                         onChange={handleChange}
-                        newTittle={newTittle}
+                        newTittle={newTitle}
                         taskId={taskId}
+                        checkState={newCompleted}
                     />
                 )}
 
                 {showDeleteModal && (
                     <PopupModalDelete
+                        onCancel={handleCancel}
+                        onDelete={handleDelete}
+                        taskId={taskId}
+                    />
+                )}
+
+                {showAddModal && (
+                    <PopupModalEdit
                         onCancel={handleCancel}
                         onDelete={handleDelete}
                         taskId={taskId}

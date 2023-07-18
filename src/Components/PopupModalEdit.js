@@ -1,14 +1,16 @@
 import React from 'react';
 
-const PopupModalEdit = ({ onCancel, onEdit, onChange, newTittle, taskId }) => {
-    const marginButtonsStyle = {
+const PopupModalEdit = ({ onCancel, onEdit, onChange, newTittle, taskId, checkState }) => {
+    const marginButtonsStyle = { // TODO: Cambiar esto por Bootstrap 5
         marginLeft: 10,
         marginRight: 10
     }
 
-    const backgroundStyle = {
+    const backgroundStyle = { // TODO: Cambiar esto por Bootstrap 5
         backgroundColor: "#FFFFFF"
     }
+
+    console.log('checkState:', checkState);
 
     return (
         <div id="edit-task-modal" className="modal modal-dialog-centered" >
@@ -20,7 +22,7 @@ const PopupModalEdit = ({ onCancel, onEdit, onChange, newTittle, taskId }) => {
                     </div>
                     <div className="modal-bodymx-3 mx-5 my-5 mt-3 mb-3" >
                         <input type="text" className="mx-5 my-5 mt-3 mb-3" value={newTittle} onChange={onChange}/>
-                        <input type="checkbox" className="row mx-5 my-5 mt-3 mb-3" />
+                        <input type="checkbox" className="row mx-5 my-5 mt-3 mb-3" checked={checkState} onChange={onChange}/>
                     </div>
                     <div className="modal-footer mx-5 my-5 mt-3 mb-3" >
                         <button style={marginButtonsStyle} type="button" className="btn btn-success" onClick={onEdit}>Edit</button>

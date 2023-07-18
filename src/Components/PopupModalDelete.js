@@ -1,7 +1,7 @@
 import React from 'react';
 
 const PopupModalDelete = ({ onCancel, onDelete, taskId }) => {
-    const marginStyle = {
+    const marginStyle = { // TODO: Cambiar esto por Bootstrap 5
         marginLeft: 100,
         marginRight: 100,
         marginTop: 40,
@@ -10,12 +10,12 @@ const PopupModalDelete = ({ onCancel, onDelete, taskId }) => {
         paddingRight: 20,
     }
 
-    const marginButtonsStyle = {
+    const marginButtonsStyle = { // TODO: Cambiar esto por Bootstrap 5
         marginLeft: 10,
         marginRight: 10
     }
 
-    const backgroundStyle = {
+    const backgroundStyle = { // TODO: Cambiar esto por Bootstrap 5
         backgroundColor: "#FFFFFF"
     }
 
