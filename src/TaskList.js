@@ -29,7 +29,6 @@ const TaskList = () => {
         fetch('https://jsonplaceholder.typicode.com/users/1/todos', {
             method: 'GET',
         }).then((response) => {
-            console.log('Status GET:', response.status);
             return response.json(); // Devuelves la promesa para el siguiente .then()
         }).then((tasks) => {
             setTasks(tasks);
@@ -46,8 +45,6 @@ const TaskList = () => {
                 // Actualizamos la lista de tareas en el codigo para no tener que llamar de nuevo a la API.
                 const updatedTasks = tasks.filter((task) => task.id !== taskId);
                 setTasks(updatedTasks);
-                console.log('Status DELEETE: ' + response.status);
-                console.log('TAREA ELIMINADA, task id:' + taskId);
             } else {
                 console.error('Error status: ' + response.status);
             }
@@ -75,8 +72,6 @@ const TaskList = () => {
         }).then((response) => {
             if (response.ok) {
                 // Actualizamos la lista de tareas en el codigo para no tener que llamar de nuevo a la API.
-                console.log('Status PUT: ' + response.status);
-
                 const updatedTasks = tasks.map((task) => {
                     if (task.id === taskId) {
                         // Actualizamos el título de la tarea modificada
@@ -84,8 +79,6 @@ const TaskList = () => {
                     }
                     return task;
                 });
-
-                console.log('RESPONSE OK');
                 setTasks(updatedTasks);
             } else {
                 console.error('Error status: ' + response.status);
@@ -98,8 +91,6 @@ const TaskList = () => {
     };
 
     const handleCreate = () => {
-        console.log("POST REQUEST");
-
         fetch('https://jsonplaceholder.typicode.com/todos/', {
             method: 'POST',
             body: JSON.stringify({
@@ -112,25 +103,19 @@ const TaskList = () => {
                 'Content-type': 'application/json; charset=UTF-8',
             },
         }).then((response) => {
-            console.log('Status POST: ' + response.status);
             response.json()
             if (response.ok) {
-                console.log('Response OK');
-
                 const newTask = {
                     userId: 1,
                     id: newId,
                     title: newTitle,
                     completed: newCompleted,
                 };
-
                 setTasks((prevState) => [...prevState, newTask]);
             } else {
                 console.error('Error status: ' + response.status);
             }
-        }).then((json) => {
-            console.log(json);
-        });
+        })
 
         setShowAddModal(false);
     };
@@ -150,9 +135,7 @@ const TaskList = () => {
     };
 
     const openEditPopup = (taskTitle, taskId, taskCompleted) => {
-        console.log(taskCompleted);
         setNewCompleted(taskCompleted);
-        console.log(newCompleted);
         setTaskId(taskId);
         setNewTitle(taskTitle);
         setShowEditModal(true);
@@ -175,9 +158,7 @@ const TaskList = () => {
             const lastTask = tasks[tasks.length - 1];
             newIdTemp = lastTask.id + 1;
         }
-        console.log('Temporal new id: ' + newIdTemp);
         setNewId(newIdTemp);
-        console.log('Final new id: ' + newId);
         setShowAddModal(true);
     };
 
@@ -199,7 +180,6 @@ const TaskList = () => {
                 <div className="row mb-3">
                     <div className="col align-self-end">
                         <AddTaskButton data-bs-target="#add-task-modal" className="text-white " style={{ color: "white"}} onClick={() => {
-                            console.log('open add popup')
                             openAddPopup();
                         }} />
                     </div>
@@ -237,7 +217,6 @@ const TaskList = () => {
                                 </td>
                                 <td className="text-center" >
                                     <EditTaskButton data-bs-target="#edit-task-modal" onClick={() => {
-                                        console.log('task.completed antes de llamar a la actualizacion: ' + task.completed);
                                         openEditPopup(task.title, task.id, task.completed);
                                     }} />
                                 </td>

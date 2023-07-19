@@ -12,8 +12,6 @@ const PopupModalEditAdd = ({ onCancel, onEdit, onCreate, onChange, newTittle, ta
         height: 30
     };
 
-    console.log('checkState:', checkState); // TEMPORAL
-
     return (
         <div id="edit-task-modal" className="modal modal-dialog-centered" >
             <div className="modal-dialog rounded-3 border ">
