@@ -1,16 +1,16 @@
-import PopupModalEdit from "./Components/PopupModalEdit";
 import React, { useEffect, useState } from 'react';
-import {EditButton} from "./Components/EditButton";
-import {DeleteButton} from "./Components/DeleteButton";
 
 // Importamos los iconos react de fontawesome
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-
-// asignamos a cada boton un
-import {AddButton} from "./Components/AddButton";
 import {faEdit} from "@fortawesome/free-regular-svg-icons";
 import {faSquare} from "@fortawesome/free-regular-svg-icons";
 import {faSquareCheck} from "@fortawesome/free-regular-svg-icons";
+
+// Asignamos los nombres a cada componente
+import {AddButton} from "./Components/AddButton";
+import {EditButton} from "./Components/EditButton";
+import {DeleteButton} from "./Components/DeleteButton";
+import PopupModalEditAdd from "./Components/PopupModalEditAdd";
 import PopupModalDelete from "./Components/PopupModalDelete";
 
 const TaskList = () => {
@@ -57,7 +57,7 @@ const TaskList = () => {
 
     const handleEdit = (event) => {
         setNewTitle(event.target.value);
-        setNewCompleted(event.target.checked); // FIXME
+        setNewCompleted(event.target.checked);
 
         console.log()
 
@@ -94,8 +94,44 @@ const TaskList = () => {
         setShowEditModal(false);
     };
 
+    const handleCreate = () => {
+        console.log("POST REQUEST");
+
+        fetch('https://jsonplaceholder.typicode.com/todos/', {
+            method: 'POST',
+            body: JSON.stringify({
+                userId: 1,
+                id: newId,
+                title: newTitle,
+                completed: newCompleted,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        })
+            .then((response) => {
+                response.json()
+                if (response.ok) {
+                    console.log('Response OK');
+                    // TODO: añadir la tarea al array, ordenar/filtrar por User ID.
+                }
+            })
+            .then((json) => {
+                console.log(json);
+            });
+
+        setShowAddModal(false);
+    };
+
+
+
+
+
+
+
     const handleCancel = () => {
         setShowEditModal(false);
+        setShowAddModal(false);
         setShowDeleteModal(false);
     };
 
@@ -122,9 +158,10 @@ const TaskList = () => {
     };
 
     const openAddPopup = () => {
-        //const newId = tasks.length + 1;
-        console.log(newId);
-        console.log(tasks.length + 1);
+        const newIdTemp = tasks.length + 1;
+        console.log('Temporal new id: ' + newIdTemp);
+        setNewId(newIdTemp);
+        console.log('Final new id: ' + newId);
         setShowAddModal(true);
     };
 
@@ -146,6 +183,7 @@ const TaskList = () => {
                 <div className="row mb-3">
                     <div className="col align-self-end">
                         <AddButton data-bs-target="#add-task-modal" className="text-white " style={{ color: "white"}} onClick={() => {
+                            console.log('open add popup')
                             openAddPopup();
                         }} />
                     </div>
@@ -159,7 +197,7 @@ const TaskList = () => {
                         <thead >
                         <tr className="text-white rounded-3">
                             <td className="text-center p-2">ID</td>
-                            <td className=" p-2">USER ID</td>
+                            <td className="text-center p-2" style={{ minWidth: "80px" }}>USER ID</td>
                             <td className="text-white p-2">TITTLE</td>
                             <td className="text-center p-2">COMPLETED</td>
                             <td className="text-center p-2">EDIT</td>
@@ -199,13 +237,14 @@ const TaskList = () => {
                 </div>
 
                 {showEditModal && (
-                    <PopupModalEdit
+                    <PopupModalEditAdd
                         onCancel={handleCancel}
                         onEdit={handleEdit}
                         onChange={handleChange}
                         newTittle={newTitle}
                         taskId={taskId}
                         checkState={newCompleted}
+                        isCreating={false}
                     />
                 )}
 
@@ -218,10 +257,12 @@ const TaskList = () => {
                 )}
 
                 {showAddModal && (
-                    <PopupModalEdit
+                    <PopupModalEditAdd
                         onCancel={handleCancel}
-                        onDelete={handleDelete}
-                        taskId={taskId}
+                        onCreate={handleCreate}
+                        onChange={handleChange}
+                        taskId={newId}
+                        isCreating={true}
                     />
                 )}
             </div>
