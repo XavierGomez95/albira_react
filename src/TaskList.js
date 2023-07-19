@@ -6,17 +6,17 @@ import {faEdit} from "@fortawesome/free-regular-svg-icons";
 import {faSquare} from "@fortawesome/free-regular-svg-icons";
 import {faSquareCheck} from "@fortawesome/free-regular-svg-icons";
 
-// Asignamos los nombres a cada componente
-import {AddButton} from "./Components/AddButton";
-import {EditButton} from "./Components/EditButton";
-import {DeleteButton} from "./Components/DeleteButton";
-import PopupModalEditAdd from "./Components/PopupModalEditAdd";
-import PopupModalDelete from "./Components/PopupModalDelete";
+// Importamos los componentes
+import {AddTaskButton} from "./Components/Buttons/AddTaskButton";
+import {EditTaskButton} from "./Components/Buttons/EditTaskButton";
+import {DeleteTaskButton} from "./Components/Buttons/DeleteTaskButton";
+import PopupModalEditAdd from "./Components/Modals/PopupModalEditAdd";
+import PopupModalDelete from "./Components/Modals/PopupModalDelete";
 
 const TaskList = () => {
     const [tasks, setTasks] = useState([]);
     const [taskId, setTaskId] = useState(0);
-    const [newId, setNewId] = useState(tasks.length); // Para crear un nuevo to do
+    const [newId, setNewId] = useState(-1); // Para crear un nuevo to do
     const [newTitle, setNewTitle] = useState('');
     const [newCompleted, setNewCompleted] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false);
@@ -26,8 +26,14 @@ const TaskList = () => {
 
     // Lo primero es el valor de tasks y lo segundo el tipo.
     useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/users/1/todos')
-            .then((response) => response.json())
+        fetch('https://jsonplaceholder.typicode.com/users/1/todos', {
+            method: 'GET',
+            // Aquí puedes incluir más opciones de configuración si es necesario, como el body y las headers
+        })
+            .then((response) => {
+                console.log('Status GET:', response.status); // Aquí imprimes el status de la respuesta
+                return response.json(); // Devuelves la promesa para el siguiente .then()
+            })
             .then((tasks) => {
                 setTasks(tasks);
             })
@@ -44,6 +50,7 @@ const TaskList = () => {
                 // Actualizamos la lista de tareas en el codigo para no tener que llamar de nuevo a la API.
                 const updatedTasks = tasks.filter((task) => task.id !== taskId);
                 setTasks(updatedTasks);
+                console.log('Status DELEETE: ' + response.status);
                 console.log('TAREA ELIMINADA, task id:' + taskId);
             } else {
                 console.log('Error status: ' + response.status);
@@ -74,6 +81,8 @@ const TaskList = () => {
         }).then((response) => {
             if (response.ok) {
                 // Actualizamos la lista de tareas en el codigo para no tener que llamar de nuevo a la API.
+                console.log('Status PUT: ' + response.status);
+
                 const updatedTasks = tasks.map((task) => {
                     if (task.id === taskId) {
                         // Actualizamos el título de la tarea modificada
@@ -108,25 +117,24 @@ const TaskList = () => {
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
-        })
-            .then((response) => {
-                response.json()
-                if (response.ok) {
-                    console.log('Response OK');
+        }).then((response) => {
+            console.log('Status POST: ' + response.status);
+            response.json()
+            if (response.ok) {
+                console.log('Response OK');
 
-                    const newTask = {
-                        userId: 1,
-                        id: newId,
-                        title: newTitle,
-                        completed: newCompleted,
-                    };
+                const newTask = {
+                    userId: 1,
+                    id: newId,
+                    title: newTitle,
+                    completed: newCompleted,
+                };
 
-                    setTasks((prevState) => [...prevState, newTask]);
-                }
-            })
-            .then((json) => {
-                console.log(json);
-            });
+                setTasks((prevState) => [...prevState, newTask]);
+            }
+        }).then((json) => {
+            console.log(json);
+        });
 
         setShowAddModal(false);
     };
@@ -189,7 +197,7 @@ const TaskList = () => {
             <div className="container">
                 <div className="row mb-3">
                     <div className="col align-self-end">
-                        <AddButton data-bs-target="#add-task-modal" className="text-white " style={{ color: "white"}} onClick={() => {
+                        <AddTaskButton data-bs-target="#add-task-modal" className="text-white " style={{ color: "white"}} onClick={() => {
                             console.log('open add popup')
                             openAddPopup();
                         }} />
@@ -227,13 +235,13 @@ const TaskList = () => {
                                     )}
                                 </td>
                                 <td className="text-center" >
-                                    <EditButton data-bs-target="#edit-task-modal" onClick={() => {
+                                    <EditTaskButton data-bs-target="#edit-task-modal" onClick={() => {
                                         console.log('task.completed antes de llamar a la actualizacion: ' + task.completed);
                                         openEditPopup(task.title, task.id, task.completed);
                                     }} />
                                 </td>
                                 <td className="text-center p-2">
-                                    <DeleteButton onClick={() => {
+                                    <DeleteTaskButton onClick={() => {
                                         openDeletePopup(task.id);
                                     }} />
                                 </td>
