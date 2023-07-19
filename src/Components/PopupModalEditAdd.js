@@ -32,7 +32,8 @@ const PopupModalEditAdd = ({ onCancel, onEdit, onCreate, onChange, newTittle, ta
                                     type="checkbox"
                                     className="custom-checkbox mx-2"
                                     style={checkboxSize}
-                                    disabled
+                                    checked={checkState}
+                                    onChange={onChange}
                                 />
                                 <label className="form-check-label"> Task completed</label>
                             </div>

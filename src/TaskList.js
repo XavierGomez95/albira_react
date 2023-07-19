@@ -113,7 +113,15 @@ const TaskList = () => {
                 response.json()
                 if (response.ok) {
                     console.log('Response OK');
-                    // TODO: añadir la tarea al array, ordenar/filtrar por User ID.
+
+                    const newTask = {
+                        userId: 1,
+                        id: newId,
+                        title: newTitle,
+                        completed: newCompleted,
+                    };
+
+                    setTasks((prevState) => [...prevState, newTask]);
                 }
             })
             .then((json) => {
@@ -122,12 +130,6 @@ const TaskList = () => {
 
         setShowAddModal(false);
     };
-
-
-
-
-
-
 
     const handleCancel = () => {
         setShowEditModal(false);
@@ -158,11 +160,16 @@ const TaskList = () => {
     };
 
     const openAddPopup = () => {
-        const newIdTemp = tasks.length + 1;
+        let newIdTemp = 1;
+        if (tasks.length > 0) {
+            const lastTask = tasks[tasks.length - 1];
+            newIdTemp = lastTask.id + 1;
+        }
         console.log('Temporal new id: ' + newIdTemp);
         setNewId(newIdTemp);
         console.log('Final new id: ' + newId);
         setShowAddModal(true);
+        setNewCompleted(false);
     };
 
 
@@ -262,6 +269,7 @@ const TaskList = () => {
                         onCreate={handleCreate}
                         onChange={handleChange}
                         taskId={newId}
+                        checkState={newCompleted}
                         isCreating={true}
                     />
                 )}
