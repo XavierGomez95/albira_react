@@ -28,18 +28,14 @@ const TaskList = () => {
     useEffect(() => {
         fetch('https://jsonplaceholder.typicode.com/users/1/todos', {
             method: 'GET',
-            // Aquí puedes incluir más opciones de configuración si es necesario, como el body y las headers
-        })
-            .then((response) => {
-                console.log('Status GET:', response.status); // Aquí imprimes el status de la respuesta
-                return response.json(); // Devuelves la promesa para el siguiente .then()
-            })
-            .then((tasks) => {
-                setTasks(tasks);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+        }).then((response) => {
+            console.log('Status GET:', response.status);
+            return response.json(); // Devuelves la promesa para el siguiente .then()
+        }).then((tasks) => {
+            setTasks(tasks);
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
     }, []);
 
     const handleDelete = () => {
@@ -53,10 +49,10 @@ const TaskList = () => {
                 console.log('Status DELEETE: ' + response.status);
                 console.log('TAREA ELIMINADA, task id:' + taskId);
             } else {
-                console.log('Error status: ' + response.status);
+                console.error('Error status: ' + response.status);
             }
         }).catch((error) => {
-            console.error('Error Deleting:', error);
+            console.error('Error catch:', error);
         });
 
         setShowDeleteModal(false);
@@ -65,8 +61,6 @@ const TaskList = () => {
     const handleEdit = (event) => {
         setNewTitle(event.target.value);
         setNewCompleted(event.target.checked);
-
-        console.log()
 
         const currentTask = tasks.find((task) => task.id === taskId);
 
@@ -91,13 +85,13 @@ const TaskList = () => {
                     return task;
                 });
 
-                console.error('RESPONSE OK');
+                console.log('RESPONSE OK');
                 setTasks(updatedTasks);
             } else {
-                console.error('NO RESPONSE OK');
+                console.error('Error status: ' + response.status);
             }
         }).catch((error) => {
-            console.error('Error Deleting:', error);
+            console.error('Error catch:', error);
         });
 
         setShowEditModal(false);
@@ -131,6 +125,8 @@ const TaskList = () => {
                 };
 
                 setTasks((prevState) => [...prevState, newTask]);
+            } else {
+                console.error('Error status: ' + response.status);
             }
         }).then((json) => {
             console.log(json);
@@ -167,7 +163,13 @@ const TaskList = () => {
         setShowDeleteModal(true);
     };
 
+    const clearNewTask = () => {
+        setNewTitle('');
+        setNewCompleted(false);
+    };
+
     const openAddPopup = () => {
+        clearNewTask();
         let newIdTemp = 1;
         if (tasks.length > 0) {
             const lastTask = tasks[tasks.length - 1];
@@ -177,7 +179,6 @@ const TaskList = () => {
         setNewId(newIdTemp);
         console.log('Final new id: ' + newId);
         setShowAddModal(true);
-        setNewCompleted(false);
     };
 
 
